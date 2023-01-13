@@ -34,7 +34,11 @@ frames[['year', 'month', 'day', 'week', 'weekday', 'day_of_week']] = (
 )
 
 def hour_and_min(x):
-    return f'{int(x)} h {round(x % int(x) * 60): >2} min'
+    if int(x) == 0:
+        minutes = round(x * 60)
+    else:
+        minutes = round(x % int(x) * 60)
+    return f'{int(x)} h {minutes: >2} min'
 
 past_weeks_included = num_weeks
 year, week = (datetime.now() - timedelta(days=past_weeks_included * 7)).strftime('%Y %W').split()
