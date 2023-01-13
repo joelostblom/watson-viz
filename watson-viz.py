@@ -42,5 +42,10 @@ def hour_and_min(x):
 
 past_weeks_included = num_weeks
 year, week = (datetime.now() - timedelta(days=past_weeks_included * 7)).strftime('%Y %W').split()
-week_frames = frames[(frames['year'] >= year) & (frames['week'] >= week)]
+# We need to add a '0' weekday to be able to use the %W for week of the year
+# https://stackoverflow.com/questions/55222420/converting-year-and-week-of-year-columns-to-date-in-pandas
+week_frames = frames[
+    pd.to_datetime(frames['year'] + frames['week'] + '0', format='%Y%W%w')
+    >= pd.to_datetime(year + week + '0', format='%Y%W%w')
+]
 print(week_frames.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).to_string())
