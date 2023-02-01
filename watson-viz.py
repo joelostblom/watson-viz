@@ -89,11 +89,13 @@ max_proj_length = max([len(ls) for ls in time_per_project])
 
 # Plot
 plt.simple_stacked_bar(
-    year_and_week,
+    # year_and_week,
+    [f'{year_week} {hour_min: >5}' for year_week, hour_min in zip(year_and_week, time_per_week_per_project.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).tolist())],
     time_per_project,
     labels=sorted_projects,
     colors=['blue', 'orange', 'magenta', 'green', 'red', 'cyan'][:len(sorted_projects)],
     width=50,
-    title='Hours per week'
+    title='Weekly Timelog',
+    bar_texts=[''] * len(time_per_week_per_project.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).tolist())
 )
 plt.show()
