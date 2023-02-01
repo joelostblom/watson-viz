@@ -1,10 +1,10 @@
 #! /home/joel/miniconda3/envs/altdev5/bin/python
 
 import sys
+from datetime import datetime, timedelta
 
 import pandas as pd
-import altair as alt
-from datetime import datetime, timedelta
+import plotext as plt
 
 
 if len(sys.argv) > 1:
@@ -48,4 +48,12 @@ week_frames = frames[
     pd.to_datetime(frames['year'] + frames['week'] + '0', format='%Y%W%w')
     >= pd.to_datetime(year + week + '0', format='%Y%W%w')
 ]
-print(week_frames.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).to_string())
+
+# Print/Plot output
+time_per_week = week_frames.groupby(['year', 'week'])['length'].sum()
+# print(time_per_week.apply(hour_and_min).to_string())
+
+year_and_week = [f'{year}-w{week}' for year, week in time_per_week.index]
+plt.simple_bar(year_and_week, time_per_week.round(1).astype(int).tolist(), width=50, title='Hours per week')
+plt.show()
+
