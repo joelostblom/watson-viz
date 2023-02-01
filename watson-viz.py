@@ -34,11 +34,17 @@ frames[['year', 'month', 'day', 'week', 'weekday', 'day_of_week']] = (
 )
 
 def hour_and_min(x):
+    # If x is so close to a full hour that the minutes would round to 60, then
+    # just round x up to show the full hour. For example, if the number is
+    # 42.998, then we show 43 h instead of showing 42 h and 60 min.
+    if round(x * 60) == 60 or round(x % int(x) * 60) == 60:
+        x = round(x)
     if int(x) == 0:
         minutes = round(x * 60)
     else:
         minutes = round(x % int(x) * 60)
-    return f'{int(x)} h {minutes: >2} min'
+    # return f'{int(x)} h {minutes: >2} min'
+    return f'{int(x)}:{minutes:0>2}'
 
 past_weeks_included = num_weeks
 year, week = (datetime.now() - timedelta(days=past_weeks_included * 7)).strftime('%Y %W').split()
@@ -78,7 +84,7 @@ time_per_project = [
     time_per_week_per_project
     .query('project == @proj')
     ['length']
-    .round()
+    # .round()
     .tolist()
     for proj in sorted_projects
 ]
