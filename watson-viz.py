@@ -49,11 +49,51 @@ week_frames = frames[
     >= pd.to_datetime(year + week + '0', format='%Y%W%w')
 ]
 
-# Print/Plot output
-time_per_week = week_frames.groupby(['year', 'week'])['length'].sum()
-# print(time_per_week.apply(hour_and_min).to_string())
+# Prep df for plotting
+sorted_projects = week_frames.groupby('project')['length'].sum().sort_values().index.tolist()[::-1]
+time_per_week_per_project = (
+    week_frames
+    # Need to make these ordered categorical to be able to sort on all three columns
+    .assign(
+        project=lambda df: pd.Categorical(
+            df['project'],
+            ordered=True,
+            categories=sorted_projects
+        )
+    )
+    # Observed=True to avoid creating entries for all combinations of project
+    # and time that doesn't exist and have 0 h spent
+    .groupby(['project', 'year', 'week'], as_index=False, observed=True)
+    ['length']
+    .sum()
+    # Sorting only on the project sometimes mixes up the dates within the same project
+    .sort_values(['project', 'year', 'week'])
+)
 
-year_and_week = [f'{year}-w{week}' for year, week in time_per_week.index]
-plt.simple_bar(year_and_week, time_per_week.round(1).astype(int).tolist(), width=50, title='Hours per week')
+# The label for each bar will be the year and week
+year_and_week = [f'{year}-w{week}' for year, week in time_per_week_per_project.set_index(['year', 'week']).index]
+
+# Create a list of lists (each with the values from a separate projects) for the plotting
+time_per_project = [
+    time_per_week_per_project
+    .query('project == @proj')
+    ['length']
+    .round()
+    .tolist()
+    for proj in sorted_projects
+]
+
+# Make all projects have as many entries since the plotting requires this
+max_proj_length = max([len(ls) for ls in time_per_project])
+[x.extend([0] * (max_proj_length - len(x))) for x in time_per_project]
+
+# Plot
+plt.simple_stacked_bar(
+    year_and_week,
+    time_per_project,
+    labels=sorted_projects,
+    colors=['blue', 'orange', 'magenta', 'green', 'red', 'cyan'][:len(sorted_projects)],
+    width=50,
+    title='Hours per week'
+)
 plt.show()
-
