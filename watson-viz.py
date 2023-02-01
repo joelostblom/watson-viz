@@ -10,7 +10,7 @@ import plotext as plt
 if len(sys.argv) > 1:
     num_weeks = int(sys.argv[1]) - 1
 else:
-    num_weeks = 2
+    num_weeks = 4
 
 frames = pd.read_json(
     '/home/joel/.config/watson/frames',
