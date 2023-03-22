@@ -71,15 +71,12 @@ time_per_week_per_project = (
             categories=sorted_projects
         )
     )
-    # Observed=True to avoid creating entries for all combinations of project
-    # and time that doesn't exist and have 0 h spent
-    .groupby(['project', 'year', 'week'], as_index=False, observed=True)
+    .groupby(['project', 'year', 'week'], as_index=False)
     ['length']
     .sum()
     # Sorting only on the project sometimes mixes up the dates within the same project
     .sort_values(['project', 'year', 'week'])
 )
-
 # The label for each bar will be the year and week
 year_and_week = [f'{year}-w{week}' for year, week in time_per_week_per_project.set_index(['year', 'week']).index]
 
@@ -99,7 +96,6 @@ max_proj_length = max([len(ls) for ls in time_per_project])
 
 # Plot
 plt.simple_stacked_bar(
-    # year_and_week,
     [f'{year_week} {hour_min: >5}' for year_week, hour_min in zip(year_and_week, time_per_week_per_project.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).tolist())],
     time_per_project,
     labels=sorted_projects,
