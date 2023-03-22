@@ -8,9 +8,14 @@ import plotext as plt
 
 
 if len(sys.argv) > 1:
-    num_weeks = int(sys.argv[1]) - 1
+    # TODO support '4-6' syntax for a range of weeks
+    # if '-' in sys.argv[1]:
+    #     start_week, end_week = [int(num) for num in sys.argv[1].split('-')]
+    # else:
+    #     past_weeks_included = int(sys.argv[1]) - 1
+    past_weeks_included = int(sys.argv[1]) - 1
 else:
-    num_weeks = 4
+    past_weeks_included = 4
 
 frames = pd.read_json(
     '/home/joel/.config/watson/frames',
@@ -46,7 +51,6 @@ def hour_and_min(x):
     # return f'{int(x)} h {minutes: >2} min'
     return f'{int(x)}:{minutes:0>2}'
 
-past_weeks_included = num_weeks
 year, week = (datetime.now() - timedelta(days=past_weeks_included * 7)).strftime('%Y %W').split()
 # We need to add a '0' weekday to be able to use the %W for week of the year
 # https://stackoverflow.com/questions/55222420/converting-year-and-week-of-year-columns-to-date-in-pandas
