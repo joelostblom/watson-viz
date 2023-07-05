@@ -42,9 +42,12 @@ def hour_and_min(x):
     # If x is so close to a full hour that the minutes would round to 60, then
     # just round x up to show the full hour. For example, if the number is
     # 42.998, then we show 43 h instead of showing 42 h and 60 min.
-    if round(x * 60) == 60 or round(x % int(x) * 60) == 60:
+    if round(x * 60) == 60 or (int(x) !=0 and round(x % int(x) * 60) == 60):
         x = round(x)
+
+    # Find the minutes
     if int(x) == 0:
+        print('happens')
         minutes = round(x * 60)
     else:
         minutes = round(x % int(x) * 60)
