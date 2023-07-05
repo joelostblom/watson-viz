@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import plotext as plt
 
+# TODO doesn't work when going over a year shift
 
 if len(sys.argv) > 1:
     # TODO support '4-6' syntax for a range of weeks
