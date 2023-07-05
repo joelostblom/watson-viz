@@ -99,13 +99,28 @@ max_proj_length = max([len(ls) for ls in time_per_project])
 [x.extend([0] * (max_proj_length - len(x))) for x in time_per_project]
 
 # Plot
+mean_weekly_time = hour_and_min(
+    sum(
+        [sum(project_time) for project_time in time_per_project]
+    ) / len(time_per_project[0])
+)
 plt.simple_stacked_bar(
-    [f'{year_week} {hour_min: >5}' for year_week, hour_min in zip(year_and_week, time_per_week_per_project.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).tolist())],
+    [
+        f'{year_week} {hour_min: >5}'
+        for year_week, hour_min
+        in zip(
+            year_and_week, time_per_week_per_project
+            .groupby(['year', 'week'])
+            ['length'].sum()
+            .apply(hour_and_min)
+            .tolist()
+        )
+    ],
     time_per_project,
     labels=sorted_projects,
     colors=['blue', 'orange', 'magenta', 'green', 'red', 'cyan'][:len(sorted_projects)],
     width=50,
-    title='Weekly Timelog',
+    title=f'Weekly Timelog (avg {mean_weekly_time})',
     bar_texts=[''] * len(time_per_week_per_project.groupby(['year', 'week'])['length'].sum().apply(hour_and_min).tolist())
 )
 plt.show()
