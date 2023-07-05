@@ -1,4 +1,4 @@
-#! /home/joel/miniconda3/envs/altdev5/bin/python
+#! /home/joel/miniconda3/envs/plotext/bin/python
 
 import sys
 from datetime import datetime, timedelta
